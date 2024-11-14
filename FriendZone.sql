@@ -25,7 +25,7 @@ CREATE TABLE Search_Results (
   
   CREATE TABLE Messages (
   UserId VARCHAR(5) FOREIGN KEY NOT NULL, -- maybe mixing up my languages, but maybe have UserId as From_User?
-  ToUser VARCHAR(20) NOT NULL, -- decide if this is UserID or as text? (text is more intuitive, UserId is cleaner?) 
+  ToUser VARCHAR(20) NOT NULL, -- decide if this is UserID or as text? (text is more intuitive, UserId is cleaner?) ...alt: can use join to have both
   FromUser VARCHAR(20) NOT NULL,
   DateTime  -- check format type NOT NULL,
   Message VARCHAR(240) NOT NULL, 
