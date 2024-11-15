@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+<h4>Sign up page</h4>
+<hr/>
+
+{% if signup_error %}
+    <div class = 'bp-danger border borded-light text-center text-light'>{{ signup_error }}</div>
+{% endif %}
+
+<form action="/signup" method="POST" class="m-5">
+    <div class="mb-3">
+        <label for="exampleInputUserName1" class="form-label">User name</label>
+        <input type="text" class="form-control" id="exampleInputUserName1" name="username">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+    </div>
+    <button type="submit" class="btn btn-outline-success">Sign up</button>
+</form>
+{% endblock centermain %}

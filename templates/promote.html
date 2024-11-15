@@ -1,0 +1,41 @@
+{% extends "layout.html" %} #DATABASE TEAM: here is shows all of the users on teh web
+#and if they are an admin or a customer
+# who got aded or deleted
+
+{% block centermain %}
+
+<h4>promo page</h4>
+<hr/>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Username</th>
+        <th scope="col">Password</th>
+        <th scope="col">Admin</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if all_databasename %}
+    {% for user in all_databasename %}
+
+    <tr>
+        <th scope="row">{{user['id']}}</th>
+        <td>{{ user['username'] }}</td>
+        <td>{{ user['password'] }}</td>
+        <td>{{ user['admin'] }}</td>
+        <td><a class='btn btn-sm btn-outline-success'
+               href="{{url_for('promote_to_admin',userid = user['id'])}}">promote</a></td>
+        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('delete_user', userid = user['id])}}">delete</a>
+        </td>
+
+    </tr>
+    {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock centermain %}

@@ -1,0 +1,35 @@
+.parent{
+    display: grid;
+    grid template-columns: 1fr 5fr 1fr;
+    grid template-rows: auto auto auto auto auto;
+    grid-gap; 10px;
+}
+.child {background-colour: blue;}
+
+}
+
+.child1{grip-columns: 1/4; grip-row: 1/2;}
+.child2{grip-columns: 1/4; grip-row: 2/3;}
+.child3{grip-columns: 1/2; grip-row: 3/4;}
+.child4{grip-columns: 2/3; grip-row: 3/4;}
+.child5{grip-columns: 3/4; grip-row: 3/4;}
+.child6{grip-columns: 1/4; grip-row: 4/5;}
+.child7{grip-columns: 1/4; grip-row: 5/6;}
+
+@media screen and (max-width: 600px) {
+    .parent{
+        display: grid;
+        grid template-columns: 1fr;
+        grid template-rows: auto auto auto auto auto auto auto;
+        grid-gap; 10px;
+    }
+
+    .child1{grip-columns: 1/2; grip-row: 1/2;}
+    .child2{grip-columns: 1/2; grip-row: 2/3;}
+    .child3{grip-columns: 1/2; grip-row: 3/4;}
+    .child4{grip-columns: 1/2; grip-row: 4/5;}
+    .child5{grip-columns: 1/2; grip-row: 5/6;}
+    .child6{grip-columns: 1/2; grip-row: 6/7;}
+    .child7{grip-columns: 1/2; grip-row: 7/8;}
+
+}
