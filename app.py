@@ -107,11 +107,11 @@ def promote():
     # return render_template('promote.html', user = user)
 
 
-@app.route( '/promote_to_admin/<int:useris>')  # UPDATEING USER, it shuld create promote and delete options on promote page
+@app.route( '/promote_to_admin/<int:userid>')  # UPDATING USER, it should create promote and delete options on promote page
 def promote_to_admin(userid):
     user = get_current_user()
     db = get_database() #DATABASE TEAM: here it will eb updating it in the database
-    db.execute('UPDATE users SET admin = 1 WHERE id = _', [userid]) #update users table and set admin collumn as 1 where id is the userid
+    db.execute('UPDATE users SET admin = 1 WHERE id = _', [userid]) #update users table and set admin column as 1 where id is the userid
     db.commit()
     return redirect(url_for('promote'))
     #return render_template('promote.html', user=user)
