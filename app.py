@@ -17,10 +17,10 @@ def get_current_user():
     return user
 
 
-@app.teardown_appcontext  # DATABASE TEAM: here I named the database 'databasename' you can change it for something better
-def close_database(error):
-    if hasattr(g, 'databasename_db'):
-        g.databasename_db.close()
+# @app.teardown_appcontext  # DATABASE TEAM: here I named the database 'databasename' you can change it for something better
+# def close_database(error):
+#     if hasattr(g, 'databasename_db'):
+#         g.databasename_db.close()
 
 
 @app.route("/home")
@@ -117,12 +117,12 @@ def promote_to_admin(userid):
     #return render_template('promote.html', user=user)
     #DATABASE TEAM: TESTING/DEBUGGING: it would be useful to change all users to 0 and then promote one to admin to check if it's working
 
-@app.route('/delete_user/ <int:userid>' # DATABASE TEAM: deleting user
+@app.route('/delete_user/ <int:userid>') # DATABASE TEAM: deleting user
 def delete_user(userid):
     db = get_database()
     db.execute('DELETE FROM users WHERE id = _', [userid]) # delete users from the table where is = user id
     db.commit()
-    return redirect(url_for('promote')
+    return redirect(url_for('promote'))
     #by deleting a user the page will refresh the page itself
     #DATABASE TEAM: it would be useful to delete some user and add see if it's working
 

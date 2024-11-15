@@ -29,4 +29,3 @@ For the code to work the test database I created based on Mahum & Desi's code ne
  - utils_oop.py (user_input): Lines 231/232/239/241/246/247/363 tweaked to reduce duplication.   
    - Line 249 added a way to shorten activity name to add to db  
    - Line 345 (get info): added a way to check location is valid before moving on
-
