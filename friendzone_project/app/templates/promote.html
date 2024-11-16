@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+
+<h4>Admin Console</h4>
+<hr/>
+<table>
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Username</th>
+        <th scope="col">Password</th>
+        <th scope="col">Admin</th>
+        <th scope="col">Update</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if all_users %}
+    {% for user in all_users %}
+
+    <tr>
+        <th scope="row">{{user['user_id']}}</th>
+        <td>{{ user['user_name'] }}</td>
+        <td>{{ user['user_password'] }}</td>
+        <td>{{ user['user_type'] }}</td>
+        <td><a class='btn btn-sm btn-outline-success'
+               href="{{url_for('admin.promote_to_admin',user_id = user['user_id'])}}">promote</a></td>
+        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('admin.delete_user', user_id = user['user_id'])}}">delete</a>
+        </td>
+
+    </tr>
+    {% endfor %}
+    {% endif %}
+    </tbody>
+</table>
+
+{% endblock centermain %}

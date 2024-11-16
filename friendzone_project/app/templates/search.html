@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+
+<h1> Search Options</h1>
+
+<!-- Form to take user input for Search Criteria -->
+<form method="POST">
+
+ <!-- Location Text Field -->
+    <div class="form-group">
+        <label for="location">Enter a Location:</label>
+        <input type="text" name="location" id="location" value="{{ location }}" placeholder="Where would you like to go?">
+    </div>
+
+ <!-- Radius Dropdown Field  -->
+    <div class="form-group">
+      <label for="radius">Choose Radius</label>
+      <select name="radius" id="radius">
+        {% for option in radius %}
+          <option value="{{ option.value }}" {% if option.selected %} selected {% endif %}>
+            {{ option.label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+ <!-- Activity Dropdown Field  -->
+    <div class="form-group">
+      <label for="activities">Choose Activity</label>
+      <select name="activities" id="activities">
+        {% for option in activities %}
+          <option value="{{ option.value }}" {% if option.selected %} selected {% endif %}>
+            {{ option.label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+ <!-- Timeslot Dropdown Field  -->
+    <div class="form-group">
+      <label for="timeslots">Choose Timeslot</label>
+      <select name="timeslots" id="timeslots">
+        {% for option in timeslots %}
+          <option value="{{ option.value }}" {% if option.selected %} selected {% endif %}>
+            {{ option.label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+  <!-- Days Dropdown Field  -->
+    <div class="form-group">
+      <label for="days">Choose Day(s)</label>
+      <select name="days" id="days">
+        {% for option in days %}
+          <option value="{{ option.value }}" {% if option.selected %} selected {% endif %}>
+            {{ option.label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+  <input type="submit" value="Search">
+
+</form>
+{% endblock centermain %}

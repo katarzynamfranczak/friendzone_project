@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+
+<title>Match</title>
+
+<body>
+<!-- Display two boxes with buttons -->
+ <div class="action-row">
+
+     <!-- Choose to save search -->
+    <div class="action-container">
+        <h2>It's a match!</h2>
+        <br>
+        <h2>Matched with User ID:  {{ session['matched_user'] }} </h2>
+
+    </div>
+
+     <!-- Choose to perform a new search -->
+     <div class="action-container">
+        <h2>Would you like to message this user?</h2>
+         <form action="/messages/reply" method="POST">
+            <input type="hidden" name="sender_id" value="{{ session['matched_user'] }}">
+             <textarea name="message" placeholder="Write your reply here..." rows="4" cols="40" required></textarea>
+            <button class='btn btn-sm btn-outline-success' type="submit">MESSAGE MY MATCH</button>
+        </form>
+    </div>
+    </div>
+ <br>
+ <br>
+
+<!-- Display search results in table format -->
+    <h1>{{ session['display_activity'] }} in {{ location }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Website</th>
+                <th>Opening Hours</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for key, values in data.items() %}
+            <tr>
+                <td>{{ values[' '] }}</td>
+                <td>{{ values['Name'] }}</td>
+                <td>{{ values['Address'] }}</td>
+                <td>
+                    {% if values['Website'] %}
+                        <a href="{{ values['Website'] }}" target="_blank">{{ values['Website'] }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                        {% for hours in values['Opening Hours'] %}
+                        <li>{{ hours }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+{% endblock centermain %}

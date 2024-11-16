@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+
+<title>Results</title>
+
+<body>
+<!-- Display two boxes with buttons -->
+ <div class="action-row">
+
+     <!-- Choose to save search -->
+    <div class="action-container">
+        <h2>Would you like to save these results? It will help us match you with other users.</h2>
+        <form method="POST" action="{{ url_for('match.save_and_match') }}">
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+     <!-- Choose to perform a new search -->
+    <div class="action-container">
+        <h2>Would you like to run a new search?</h2>
+        <form method="GET" action="{{ url_for('search.search') }}">
+            <input type="submit" value="NEW SEARCH">
+        </form>
+    </div>
+</div>
+
+ <br>
+ <br>
+
+<!-- Display search results in table format -->
+    <h1>{{ activity }} in {{ location }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Website</th>
+                <th>Opening Hours</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for key, values in data.items() %}
+            <tr>
+                <td>{{ values[' '] }}</td>
+                <td>{{ values['Name'] }}</td>
+                <td>{{ values['Address'] }}</td>
+                <td>
+                    {% if values['Website'] %}
+                        <a href="{{ values['Website'] }}" target="_blank">{{ values['Website'] }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>
+                    <ul>
+                        {% for hours in values['Opening Hours'] %}
+                        <li>{{ hours }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+{% endblock centermain %}

@@ -1,0 +1,61 @@
+
+{% extends "layout.html" %}
+
+{% block centermain %}
+<title>Messages</title>
+<h1>Messages with User No: {{ session['sender_id'] }}</h1>
+
+<body>
+<!-- Display two boxes with buttons -->
+ <div class="action-row">
+
+     <!-- Choose to save search -->
+    <div class="action-container">
+        <h2>Would you like to delete this thread?</h2>
+         <form action="/messages/delete" method="POST">
+            <input type="hidden" name="sender_id" value="{{ session['sender_id'] }}">
+            <button class='btn btn-sm btn-outline-danger' type="submit">DELETE</button>
+        </form>
+    </div>
+
+     <!-- Choose to perform a new search -->
+    <div class="action-container">
+        <h2>Would you reply to this thread?</h2>
+         <form action="/messages/reply" method="POST">
+            <input type="hidden" name="sender_id" value="{{ session['sender_id'] }}">
+             <textarea name="message" placeholder="Write your reply here..." rows="4" cols="40" required></textarea>
+            <button class='btn btn-sm btn-outline-success' type="submit">REPLY</button>
+        </form>
+    </div>
+ </div>
+
+ <br>
+ <br>
+
+<!-- Display search results in table format -->
+    <table>
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>Date</th>
+                <th>Message</th>
+                <th>Read?</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for message in data %}
+            <tr>
+                <td>{{ 'You' if message['sender_id'] == session['user_id'] else message['sender_id'] }}</td>
+                <td>{{ message['date_time'].strftime('%a %d %b, %I.%M%p') }}</td>
+                <td>{{ message['message'] }}</td>
+                <td>{{ 'Yes' if message['isRead'] else 'No' }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+{% endblock centermain %}

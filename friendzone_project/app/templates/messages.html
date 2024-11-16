@@ -1,0 +1,47 @@
+
+{% extends "layout.html" %}
+
+{% block centermain %}
+<title>Messages</title>
+<h1>Message Inbox</h1>
+
+<body>
+
+<br>
+
+ <br>
+ <br>
+
+<!-- Display search results in table format -->
+    <table>
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>Date</th>
+                <th>Message</th>
+                <th>Read?</th>
+                <th>Reply</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for message in data %}
+            <tr>
+                <td>{{ message['sender_id'] }}</td>
+                <td>{{ message['date_time'].strftime('%a %d %b, %I.%M%p') }}</td>
+                <td>{{ message['message'] }}</td>
+                <td>{{ 'Yes' if message['isRead'] else 'No' }}</td>
+                <td>
+                    <form action="/messages/thread" method="POST">
+                    <input type="hidden" name="sender_id" value="{{ message['sender_id'] }}">
+                    <button class='btn btn-sm btn-outline-success' type="submit">Full Thread</button>
+                </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+{% endblock centermain %}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block centermain %}
+<h4>Log in page</h4>
+<hr/>
+
+{% if loginerror %}
+<div class='bp-danger border border-light text-center text-light'>{{ loginerror }}</div>
+{% endif %}
+
+<form action="/login" method="POST" class="m-5">
+    <div class="mb-3">
+        <label for="exampleInputUserName1" class="form-label">User name</label>
+        <input type="text" class="form-control" id="exampleInputUserName1" name="user_name">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="user_password">
+    </div>
+    <button type="submit" class="btn btn-outline-light text-dark">Login</button>
+    <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='/change_password'">Forgot Password</button>
+</form>
+{% endblock centermain %}

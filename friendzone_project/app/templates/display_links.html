@@ -1,0 +1,47 @@
+{% macro display_links(user) %}
+
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('home.home') }}">Home</a>
+    </li>
+
+        <!-- Added these two display links for when the user is logged in -->
+    {% if session.get('username') %}
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('search.search') }}">Search</a>
+    </li>
+
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('messages.messages') }}">Messages</a>
+    </li>
+
+
+    {% else %}
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('home.login') }}">Log in</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('home.signup') }}">Sign up</a>
+    </li>
+
+    {% endif %}
+
+
+    {% if session.get('user_type') == 'admin' %}
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('admin.promote') }}">Promote</a>
+    </li>
+
+    {% endif %}
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ url_for('home.logout') }}">Log out</a>
+    </li>
+
+</ul>
+
+{% endmacro %}
