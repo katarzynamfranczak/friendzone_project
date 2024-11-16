@@ -13,8 +13,8 @@ In order to install the necessary python libraries, you would need to install th
   
   
 ## Raha 15/11  
-# I have amended Hannah's code to include the green and orange section of the diagram (saving search results and matching users)  
-# For the code to work the test database I created based on Mahum & Desi's code needs to be used   
+I have amended Hannah's code to include the green and orange section of the diagram (saving search results and matching users)  
+For the code to work the test database I created based on Mahum & Desi's code needs to be used   
   
 ### As per above set up instructions & In addition  
 5) db_helpers.py include all of the database related functions which are referenced in utils_oop.py  
