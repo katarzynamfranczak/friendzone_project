@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from database import get_database
-from werkzeug.security import generate_password_hashed, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__, static_folder='static')
@@ -69,7 +69,7 @@ def signup():
         password = request.form['password']
 
         # hash password
-        hashed_password = generate_password_hashed(password)
+        hashed_password = generate_password_hash(password)
 
         # connect to database
         db = get_database()  # DATABASE TEAM:  database needs to be done properly

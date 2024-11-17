@@ -1,4 +1,3 @@
-{% from "display_links.html" import display_links %}
 
 <!doctype html>
 <html lang="en">
@@ -14,6 +13,7 @@
           crossorigin="anonymous">
 </head>
 <body>
+{% from "display_links.html" import display_links %}
 <div class="parent">
     <div class="child child1">
 
@@ -27,29 +27,6 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     {{ display_links(user) }}
-
-<!--                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">--> <!-- THIS MUST Be DELETED -->
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" aria-current="page" href={{ url_for('home') }}>Home</a>-->
-<!--                        </li>-->
-
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" aria-current="page" href={{ url_for('login') }}>Log in</a>-->
-<!--                        </li>-->
-
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" aria-current="page" href={{ url_for('signup') }}>Sign up</a>-->
-<!--                        </li>-->
-
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" aria-current="page" href={{ url_for('promote') }}>Promote</a>-->
-<!--                        </li>-->
-
-<!--                        <li class="nav-item">-->
-<!--                            <a class="nav-link active" aria-current="page" href={{ url_for('logout') }}>Log out</a>-->
-<!--                        </li>-->
-
-<!--                    </ul>-->
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -66,17 +43,9 @@
     </div>
     <div class="child child3 m-3">
 
-        {{% if user %}}
-            <p>Use: {{user['username']}} </p>
-        {{% endif %}}
-
-        <!--        <ul class="list-group list-group-flush text-center">-->
-        <!--            <li class="list-group-item">An item</li>-->
-        <!--            <li class="list-group-item">A second item</li>-->
-        <!--            <li class="list-group-item">A third item</li>-->
-        <!--            <li class="list-group-item">A fourth item</li>-->
-        <!--            <li class="list-group-item">And a fifth one</li>-->
-        <!--        </ul>-->
+        {% if user %}
+        <p>Use: {{user['username']}} </p>
+        {% endif %}
     </div>
     <div class="child child4 m-5 border">
         {% block centermain %}
@@ -110,3 +79,4 @@
         crossorigin="anonymous"></script>
 </body>
 </html>
+{% from "display_links.html" import display_links %}
