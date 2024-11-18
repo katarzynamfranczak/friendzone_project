@@ -8,7 +8,6 @@ app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
 
 
-
 def get_current_user():
     user = None
     if 'user' in session:
@@ -94,7 +93,8 @@ def signup():
             return render_template('signup.html', signup_error=signup_error)
 
         # DATABASE TEAM: sql query to insert this to database table
-        cursor.execute(f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', 'kf@kf.com', 'user', '1996-01-01');")
+        cursor.execute(
+            f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', 'kf@kf.com', 'user', '1996-01-01');")
         # DATABASE TEAM: make the changes in the database table
         db.commit()
         cursor.close()
@@ -118,24 +118,28 @@ def promote():
     # return render_template('promote.html', user = user)
 
 
-@app.route( '/promote_to_admin/<int:user_id>')  # UPDATING USER, it should create promote and delete options on promote page
+@app.route(
+    '/promote_to_admin/<int:user_id>')  # UPDATING USER, it should create promote and delete options on promote page
 def promote_to_admin(user_id):
     user = get_current_user()
-    db = get_database() #DATABASE TEAM: here it will eb updating it in the database
-    db.execute('UPDATE Users SET user_type = "admin" WHERE user_id = _', [user_id]) #update users table and set admin column as 1 where id is the userid
+    db = get_database()  # DATABASE TEAM: here it will eb updating it in the database
+    db.execute('UPDATE Users SET user_type = "admin" WHERE user_id = _',
+               [user_id])  # update users table and set admin column as 1 where id is the userid
     db.commit()
     return redirect(url_for('promote'))
-    #return render_template('promote.html', user=user)
-    #DATABASE TEAM: TESTING/DEBUGGING: it would be useful to change all users to 0 and then promote one to admin to check if it's working
+    # return render_template('promote.html', user=user)
+    # DATABASE TEAM: TESTING/DEBUGGING: it would be useful to change all users to 0 and then promote one to admin to check if it's working
 
-@app.route('/delete_user/<int:user_id>') # DATABASE TEAM: deleting user
+
+@app.route('/delete_user/<int:user_id>')  # DATABASE TEAM: deleting user
 def delete_user(user_id):
     db = get_database()
-    db.execute('DELETE FROM Users WHERE user_id = _', [user_id]) # delete users from the table where is = user id
+    db.execute('DELETE FROM Users WHERE user_id = _', [user_id])  # delete users from the table where is = user id
     db.commit()
     return redirect(url_for('promote'))
-    #by deleting a user the page will refresh the page itself
-    #DATABASE TEAM: it would be useful to delete some user and add see if it's working
+    # by deleting a user the page will refresh the page itself
+    # DATABASE TEAM: it would be useful to delete some user and add see if it's working
+
 
 @app.route("/logout")
 def logout():
