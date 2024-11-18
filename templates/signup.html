@@ -5,18 +5,27 @@
 <hr/>
 
 {% if signup_error %}
-    <div class = 'bp-danger border border-light text-center text-light'>{{ signup_error }}</div>
+<div class='bp-danger border border-light text-center text-light'>{{ signup_error }}</div>
 {% endif %}
 
 <form action="/signup" method="POST" class="m-5">
     <div class="mb-3">
+        <label for="exampleInputUserEmail1" class="form-label">Email</label>
+        <input type="email" class="form-control" id="exampleInputUserEmail1" name="email"> <!-- check type= email -->
+    </div>
+    <div class="mb-3">
         <label for="exampleInputUserName1" class="form-label">User name</label>
-        <input type="text" class="form-control" id="exampleInputUserName1" name="username">
+        <input type="text" class="form-control" id="exampleInputUserName1" name="user_name">
     </div>
     <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input type="password" class="form-control" id="exampleInputPassword1" name="password">
+        <input type="password" class="form-control" id="exampleInputPassword1" name="user_password">
     </div>
+    <div class="mb-3">
+        <label for="exampleInputDOB1" class="form-label">Date of birth</label>
+        <input type="date" class="form-control" id="exampleInputDOB1" name="uer_dob"> <!-- check: type = date -->
+    </div>
+<!--    exception handling for the age restriction -->
     <button type="submit" class="btn btn-outline-success">Sign up</button>
 </form>
 {% endblock centermain %}
