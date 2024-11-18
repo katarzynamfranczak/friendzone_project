@@ -1,11 +1,13 @@
-from flask import Flask, render_template, url_for, request, redirect, session
+from flask import Flask, render_template, url_for, request, redirect, session, flash
+from flask_bcrypt import Bcrypt
 from database import get_database
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
-import uuid
+from datetime import datetime
+
 
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
+bcrypt = Bcrypt(app)
 
 
 def get_current_user():
@@ -13,16 +15,10 @@ def get_current_user():
     if 'user' in session:
         user = session['user']
         db = get_database()
-        user_get = db.execute('SELECT * FROM users WHERE user_name = _', [user])
-        user = user_get.fetchone()
+        cursor = db.cursor(buffered=True, dictionary=True)
+        cursor.execute(f"SELECT * FROM users WHERE user_name = '{user}';")
+        user = cursor.fetchone()
     return user
-
-
-# @app.teardown_appcontext  # DATABASE TEAM: here I named the database 'databasename' you can change it for something better
-# def close_database(error):
-#     if hasattr(g, 'databasename_db'):
-#         g.databasename_db.close()
-
 
 @app.route("/home")
 @app.route("/")
@@ -45,22 +41,17 @@ def login():
         db = get_database()
         cursor = db.cursor(buffered=True, dictionary=True)
         print(f"INPUTS: {user_name}, {user_created_password}")
-        user_get = cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
-        user = None
-        if user_get:
-            user = user_get.fetchone()
-        else:
-            print("USER IS NONE")
+        cursor.execute(f"SELECT * FROM Users WHERE user_name = '{user_name}';")
+        user = cursor.fetchone()
         if user:
-            if check_password_hash(user, user_created_password):
+            if bcrypt.check_password_hash(user['user_password'], user_created_password):
                 print("SUCCESSFUL LOGIN")
                 session['user'] = user['user_name']
                 return redirect(url_for('home'))
             else:
                 print("INCORRECT PASSWORD")
                 error = 'Incorrect password'
-                # return redirect(url_for('login', loginerror=error)) # might add it back
-        # return redirect(url_for('home')) # might add it back
+
         cursor.close()
     return render_template("login.html", loginerror=error, user=user)
 
@@ -73,37 +64,46 @@ def signup():
     if request.method == "POST":
         # get info from html form
         user_name = request.form['user_name']
-        user_password = request.form['user_password']
+        email = request.form['email']
+        user_dob = request.form['user_dob']
 
-        # hash password
-        # hashed_password = generate_password_hash(password)
+        user_dob = datetime.strptime(user_dob, "%Y-%m-%d")
+        today = datetime.today()
+        age = today.year - user_dob.year - ((today.month, today.day) < (user_dob.month, user_dob.day))
+
+        if age <= 18:
+            flash('You must be at least 18 years old to signup to Friendzone')
+
+
+        # we want to encrypt the password before storing in db
+        user_password = bcrypt.generate_password_hash(
+            request.form['user_password']
+        ).decode('utf-8')
 
         # connect to database
-        db = get_database()  # DATABASE TEAM:  database needs to be done properly
+        db = get_database()
         cursor = db.cursor(buffered=True, dictionary=True)
         # duplicate
-        user_get = cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
-        existing_user = None
-        if user_get:
-            existing_user = user_get.fetchone()
+        cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
+        existing_user = cursor.fetchone()
         print(f"existing user: {existing_user}")
         if existing_user:
             signup_error = 'Username already exists, please set-up different user name'
 
             return render_template('signup.html', signup_error=signup_error)
 
-        # DATABASE TEAM: sql query to insert this to database table
+
         cursor.execute(
-            f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', 'kf@kf.com', 'user', '1996-01-01');")
-        # DATABASE TEAM: make the changes in the database table
+            f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', '{email}', 'user', '{user_dob}');")
+
         db.commit()
         cursor.close()
         return redirect(url_for('login'))
     return render_template("signup.html", user=user)
 
 
-@app.route('/promote')  # methods = ['POST', 'GET']) I might add it back
-# DATABASE TEAM: fyi
+@app.route('/promote')
+
 def promote():
     user = get_current_user()
     db = get_database()
@@ -111,42 +111,34 @@ def promote():
     all_databasename = all_users_get.fetchall()
     return render_template('promote.html', user=user)
 
-    # if request.method == 'GET': left it here in case if I will need it
-    #     all_users_get = db.execute('SELECT * FROM users')
-    #     all_databasename = all_users_get.fetchall()
-    #     return redirect(url_for('promote', all_databasename = all_databasename))
-    # return render_template('promote.html', user = user)
-
-
 @app.route(
-    '/promote_to_admin/<int:user_id>')  # UPDATING USER, it should create promote and delete options on promote page
+    '/promote_to_admin/<int:user_id>')  #  it should create promote page and delete options on promote page
 def promote_to_admin(user_id):
-    user = get_current_user()
-    db = get_database()  # DATABASE TEAM: here it will eb updating it in the database
+    user_id = get_current_user()
+    db = get_database()
     db.execute('UPDATE Users SET user_type = "admin" WHERE user_id = _',
-               [user_id])  # update users table and set admin column as 1 where id is the userid
+               [user_id])
     db.commit()
     return redirect(url_for('promote'))
-    # return render_template('promote.html', user=user)
-    # DATABASE TEAM: TESTING/DEBUGGING: it would be useful to change all users to 0 and then promote one to admin to check if it's working
 
 
-@app.route('/delete_user/<int:user_id>')  # DATABASE TEAM: deleting user
+@app.route('/delete_user/<int:user_id>')
 def delete_user(user_id):
     db = get_database()
-    db.execute('DELETE FROM Users WHERE user_id = _', [user_id])  # delete users from the table where is = user id
+    db.execute('DELETE FROM Users WHERE user_id = _', [user_id])
     db.commit()
     return redirect(url_for('promote'))
-    # by deleting a user the page will refresh the page itself
-    # DATABASE TEAM: it would be useful to delete some user and add see if it's working
 
+
+
+@app.route("/forgot_password", methods=["POST", "GET"])
+def forgot_password():
+    return redirect(url_for('forgot_password'))
 
 @app.route("/logout")
 def logout():
     session.pop('user', None)
     return redirect(url_for('home'))
-
-    # return render_template("logout.html")
 
 
 if __name__ == "__main__":

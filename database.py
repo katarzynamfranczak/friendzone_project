@@ -1,4 +1,4 @@
-import mysql.connector #DATABASE TEAM: to install: (pip install mysql-connector-python)
+import mysql.connector
 from flask import g
 import mysql.connector
 from credentials import HOST, USER, PASSWORD, DATABASE
