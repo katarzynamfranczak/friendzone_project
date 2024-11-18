@@ -7,6 +7,7 @@ app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandome(24)
 
 
+
 def get_current_user():
     user = None
     if 'user' in session:

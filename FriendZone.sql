@@ -30,8 +30,8 @@ CREATE TABLE Favourites (
 	activity ENUM("Pub/bar", "Cinema", "Bakery") NOT NULL,
     latitude DECIMAL(11, 8),  -- Since latitude ranges from -180 to +180 (degrees), a DECIMAL(11,8) is appropriate.
     longitude DECIMAL(11, 8), -- Since longtitude ranges from -180 to +180 (degrees), a DECIMAL(11,8) is appropriate.
-    time_block VARCHAR(9) NOT NULL, -- Python code will need to present time block options e.g. 0900-1200...alt ENUM 
-    -- times DATETIME,
+    time_block VARCHAR(9), -- Python code will need to present time block options e.g. 0900-1200...alt ENUM
+    times DATETIME,
     venue_id VARCHAR(10) NOT NULL, -- if no review function, no need for venue_id, and remove from insert into also
     vegan BOOLEAN DEFAULT FALSE,
     gluten_free BOOLEAN DEFAULT FALSE,
@@ -39,18 +39,18 @@ CREATE TABLE Favourites (
     dog_friendly BOOLEAN DEFAULT FALSE,
 	CONSTRAINT FK_Favourites_id FOREIGN KEY (user_id) REFERENCES Users (user_id)
     );
-    
-INSERT INTO Favourites (faves_id, user_id, latitude, longitude, times, activity, venue_id, vegan, gluten_free, alcohol_free, dog_friendly)
-VALUES
-("FAV00001", "ID001", 40.748817, -73.985428, "2024-11-16 14:30:00", "Pub/bar", "VENUE001", TRUE, TRUE, FALSE, TRUE); 
 
-  CREATE TABLE Notification (
-  notification_id VARCHAR(8) PRIMARY KEY,
-  user_id VARCHAR(5), 
-  user_name VARCHAR(20) UNIQUE, -- discuss/explore: how to differentiate between the two users ...may not need if same notification to users 
-  date_time TIMESTAMP, 
-  notification VARCHAR(240) NOT NULL, 
-  -- notification_read BOOLEAN NOT NULL), -- maybe a stretch: if there is a way to confirm/reject, then notify contact details 
-  CONSTRAINT FK_Messages_uid FOREIGN KEY (user_id) REFERENCES Users (user_id),
-  CONSTRAINT FK_Messages_uname FOREIGN KEY (user_name) REFERENCES Users (user_name)
-    ); -- possibly, this should be separate and instead have a sent? (/additionally)
+INSERT INTO Favourites (faves_id, user_id, activity, latitude, longitude, times, venue_id, vegan, gluten_free, alcohol_free, dog_friendly)
+VALUES
+("FAV00001", "ID001", "Cinema", 40.748817, -73.985428, "2024-11-16T14:30:00", "VENUE001", TRUE, TRUE, FALSE, TRUE);
+
+CREATE TABLE Notification (
+notification_id VARCHAR(8) PRIMARY KEY,
+user_id VARCHAR(5),
+-- user_name VARCHAR(20) UNIQUE, -- discuss/explore: how to differentiate between the two users ...may not need if same notification to users
+date_time TIMESTAMP,
+notification VARCHAR(240) NOT NULL,
+-- notification_read BOOLEAN NOT NULL), -- maybe a stretch: if there is a way to confirm/reject, then notify contact details
+CONSTRAINT FK_Messages_uid FOREIGN KEY (user_id) REFERENCES Users (user_id)
+-- CONSTRAINT FK_Messages_uname FOREIGN KEY (user_name) REFERENCES Users (user_name)
+); -- possibly, this should be separate and instead have a sent? (/additionally)
