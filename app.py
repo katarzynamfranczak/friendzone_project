@@ -46,8 +46,7 @@ def login():
         db = get_database()
         cursor = db.cursor(buffered=True, dictionary=True)
         print(f"INPUTS: {user_name}, {user_created_password}")
-        user_get = cursor.execute(f"SELECT * FROM users WHERE user_name = 'kf1';")
-        print(user_get)
+        user_get = cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
         user = None
         if user_get:
             user = user_get.fetchone()
