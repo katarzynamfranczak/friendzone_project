@@ -28,8 +28,8 @@ and if they are an admin or a customer
         <td>{{ user['password'] }}</td>
         <td>{{ user['admin'] }}</td>
         <td><a class='btn btn-sm btn-outline-success'
-               href="{{url_for('promote_to_admin',userid = user['id'])}}">promote</a></td>
-        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('delete_user', userid = user['id])}}">delete</a>
+               href="{{url_for('promote_to_admin',user_id = user['id'])}}">promote</a></td>
+        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('delete_user', user_id = user['id])}}">delete</a>
         </td>
 
     </tr>

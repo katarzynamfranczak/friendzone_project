@@ -10,6 +10,6 @@ HOST ="localhost"
 
 USER = "root"  # Replace with your database username
 
-PASSWORD =  "", # Replace with your database password
+PASSWORD = "katarzyna" # Replace with your database password
 
 DATABASE = "FriendZone"
