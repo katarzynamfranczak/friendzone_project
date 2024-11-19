@@ -4,10 +4,11 @@ from database import get_database
 import os
 from datetime import datetime
 
-
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
 bcrypt = Bcrypt(app)
+app.secret_key = 'your_secret_key'
+
 
 
 def get_current_user():
@@ -19,6 +20,7 @@ def get_current_user():
         cursor.execute(f"SELECT * FROM users WHERE user_name = '{user}';")
         user = cursor.fetchone()
     return user
+
 
 @app.route("/home")
 @app.route("/")
@@ -74,7 +76,6 @@ def signup():
         if age <= 18:
             flash('You must be at least 18 years old to signup to Friendzone')
 
-
         # we want to encrypt the password before storing in db
         user_password = bcrypt.generate_password_hash(
             request.form['user_password']
@@ -92,7 +93,6 @@ def signup():
 
             return render_template('signup.html', signup_error=signup_error)
 
-
         cursor.execute(
             f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', '{email}', 'user', '{user_dob}');")
 
@@ -103,7 +103,6 @@ def signup():
 
 
 @app.route('/promote')
-
 def promote():
     user = get_current_user()
     db = get_database()
@@ -111,8 +110,9 @@ def promote():
     all_databasename = all_users_get.fetchall()
     return render_template('promote.html', user=user)
 
-@app.route(
-    '/promote_to_admin/<int:user_id>')  #  it should create promote page and delete options on promote page
+
+@app.route('/promote_to_admin/<int:user_id>')
+# it should create promote page and delete options on promote page
 def promote_to_admin(user_id):
     user_id = get_current_user()
     db = get_database()
@@ -131,14 +131,39 @@ def delete_user(user_id):
 
 
 
-@app.route("/forgot_password", methods=["POST", "GET"])
-def forgot_password():
-    return redirect(url_for('forgot_password'))
+@app.route("/change_password", methods=["POST", "GET"])
+def change_password():
+    if request.method == "POST":
+        email = request.form['email']
+
+        # setting new password
+        new_user_password = bcrypt.generate_password_hash(
+            request.form['user_password']
+        ).decode('utf-8')
+
+        # connect to database | needs more work, it does not change the password
+        db = get_database()
+        cursor = db.cursor(buffered=True, dictionary=True)
+
+        cursor.execute(
+            # f"insert into users (email, user_password) values ('{email}', '{email}');")
+            f"UPDATE users (email, user_password) values ('{email}', '{new_user_password}');")
+        # instead of insert should I use UPDATE Users SET user_password = 'new_user_password' WHERE email = 'user_email';
+
+        db.commit()
+        cursor.close()
+
+        return redirect(url_for('login'))
+
+
+    return render_template("change_password.html")
+    # how to direct the user to log in page?
+
 
 @app.route("/logout")
 def logout():
     session.pop('user', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
