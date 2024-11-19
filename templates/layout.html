@@ -13,6 +13,7 @@
           crossorigin="anonymous">
 </head>
 <body>
+
 {% from "display_links.html" import display_links %}
 <div class="parent">
     <div class="child child1">
@@ -26,7 +27,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    {{ display_links(user) }}
+                    {{ display_links(user_details) }}
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -39,13 +40,10 @@
     </div>
     <div class="child child2 d-flex justify-content-between m-3">
         <h1> Page </h1>
-        <p> User: </p>
+        <p> User: {{ session['user'] }}</p>
     </div>
     <div class="child child3 m-3">
 
-        {% if user %}
-        <p>Use: {{user['username']}} </p>
-        {% endif %}
     </div>
     <div class="child child4 m-5 border">
         {% block centermain %}

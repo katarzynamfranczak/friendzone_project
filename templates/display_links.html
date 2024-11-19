@@ -17,7 +17,7 @@
 
     {% endif %}
 
-    {% if user and user['admin'] == 1 %}
+    {% if user and user['user_type'] == 'admin' %}
 
     <li class="nav-item">
         <a class="nav-link active" aria-current="page" href="{{ url_for('promote') }}">Promote</a>

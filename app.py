@@ -3,12 +3,15 @@ from flask_bcrypt import Bcrypt
 from database import get_database
 import os
 from datetime import datetime
+import sys
+
+
 
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
 bcrypt = Bcrypt(app)
 app.secret_key = 'your_secret_key'
-
+sys.setrecursionlimit(100)
 
 
 def get_current_user():
@@ -19,6 +22,7 @@ def get_current_user():
         cursor = db.cursor(buffered=True, dictionary=True)
         cursor.execute(f"SELECT * FROM users WHERE user_name = '{user}';")
         user = cursor.fetchone()
+        cursor.close()
     return user
 
 
@@ -49,7 +53,7 @@ def login():
             if bcrypt.check_password_hash(user['user_password'], user_created_password):
                 print("SUCCESSFUL LOGIN")
                 session['user'] = user['user_name']
-                return redirect(url_for('home'))
+                return render_template("home.html", user_details=user)
             else:
                 print("INCORRECT PASSWORD")
                 error = 'Incorrect password'
@@ -75,6 +79,7 @@ def signup():
 
         if age <= 18:
             flash('You must be at least 18 years old to signup to Friendzone')
+            #catch try except error 'mysql.connector.errors.DatabaseError: 3819 (HY000): Check constraint 'age_restriction' is violated.'
 
         # we want to encrypt the password before storing in db
         user_password = bcrypt.generate_password_hash(
@@ -100,26 +105,33 @@ def signup():
         cursor.close()
         return redirect(url_for('login'))
     return render_template("signup.html", user=user)
-
-
-@app.route('/promote')
+@app.route('/promote', methods=['POST', 'GET'])
 def promote():
     user = get_current_user()
     db = get_database()
-    all_users_get = db.execute('SELECT * FROM users')
-    all_databasename = all_users_get.fetchall()
-    return render_template('promote.html', user=user)
 
+    cursor = db.cursor(buffered=True, dictionary=True)
+    cursor.execute("SELECT * FROM users;")
+    all_users = cursor.fetchall()
+    cursor.close()
+
+    return render_template('promote.html', user=user, all_users=all_users)
 
 @app.route('/promote_to_admin/<int:user_id>')
-# it should create promote page and delete options on promote page
 def promote_to_admin(user_id):
-    user_id = get_current_user()
     db = get_database()
-    db.execute('UPDATE Users SET user_type = "admin" WHERE user_id = _',
-               [user_id])
+
+    cursor = db.cursor(buffered=True, dictionary=True)
+    cursor.execute("UPDATE users SET user_type = 'admin' WHERE user_id = %s", (user_id,))
     db.commit()
+    cursor.close()
+
+    flash(f"User with ID {user_id} has been promoted to admin.")
+
     return redirect(url_for('promote'))
+
+
+
 
 
 @app.route('/delete_user/<int:user_id>')
@@ -146,10 +158,7 @@ def change_password():
         cursor = db.cursor(buffered=True, dictionary=True)
 
         cursor.execute(
-            # f"insert into users (email, user_password) values ('{email}', '{email}');")
-            f"UPDATE users (email, user_password) values ('{email}', '{new_user_password}');")
-        # instead of insert should I use UPDATE Users SET user_password = 'new_user_password' WHERE email = 'user_email';
-
+            f"UPDATE users SET user_password = '{new_user_password}' WHERE email = '{email}';")
         db.commit()
         cursor.close()
 

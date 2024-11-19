@@ -4,7 +4,6 @@
 
 <h4>promo page</h4>
 <hr/>
-
 <table class="table">
     <thead>
     <tr>
@@ -17,17 +16,17 @@
     </tr>
     </thead>
     <tbody>
-    {% if users %}
-    {% for user in all_user %}
+    {% if all_users %}
+    {% for user in all_users %}
 
     <tr>
-        <th scope="row">{{user['id']}}</th>
-        <td>{{ user['username'] }}</td>
-        <td>{{ user['password'] }}</td>
-        <td>{{ user['admin'] }}</td>
+        <th scope="row">{{user['user_id']}}</th>
+        <td>{{ user['user_name'] }}</td>
+        <td>{{ user['user_password'] }}</td>
+        <td>{{ user['user_type'] }}</td>
         <td><a class='btn btn-sm btn-outline-success'
-               href="{{url_for('promote_to_admin',user_id = user['id'])}}">promote</a></td>
-        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('delete_user', user_id = user['id'])}}">delete</a>
+               href="{{url_for('promote_to_admin',user_id = user['user_id'])}}">promote</a></td>
+        <td><a class='btn btn-sm btn-outline-danger' href="{{url_for('delete_user', user_id = user['user_id'])}}">delete</a>
         </td>
 
     </tr>
