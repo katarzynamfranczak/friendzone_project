@@ -1,12 +1,12 @@
-DROP DATABASE FriendZone;
+-- DROP DATABASE FriendZone;
 CREATE DATABASE FriendZone;
 USE FriendZone;
 -- A table consisting of all users with login credentials for FriendZone:
 CREATE TABLE Users (
   user_id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, -- known to app admin
   user_name VARCHAR(20) UNIQUE NOT NULL,
-  email VARCHAR(20) UNIQUE NOT NULL,
-  user_password VARCHAR(10) NOT NULL, -- only accepts 10, not 9? *add in Python code: to be 9 characters long, upper, lower case, number, special character*
+  email VARCHAR(255) UNIQUE NOT NULL,
+  user_password VARCHAR(255) NOT NULL,
   user_type ENUM("admin", "user") NOT NULL,
   user_dob DATE NOT NULL, -- must be in the format: YYYY-MM-DD *instruction to be made in Python code*
   CONSTRAINT age_restriction CHECK (TIMESTAMPDIFF(YEAR, user_dob, SYSDATE()) >= 18)
@@ -15,7 +15,7 @@ CREATE TABLE Users (
 
 INSERT INTO Users
 VALUES
-(1, "DesiP", "dp@mail.com", "password!", "admin", "2000-01-01"),
+(1, "DesiP", "dp@mail.com", "$2b$12$GL14nBsFLdh3CR0AH8V/j.VprEGaAqqJPk413K6Potlv1pM.AD./y", "admin", "2000-01-01"),
 (2, "HannahC", "hc@mail.com", "password2", "admin", "1999-02-02"),
 (3, "KatF", "kf@mail.com", "password3", "user", "1998-03-03"),
 (4, "KoniB", "kb@mail.com", "password4)", "user", "1997-04-04"),
@@ -24,6 +24,8 @@ VALUES
 (7, "RahaT", "rt@mail.com", "password7", "user", "1995-07-07")
 -- ("ID008", "SusanQ", "sq@mail.com", "password8", "user", "2010-08-08"); --this is a test of underaged user
 ;
+
+select *  from users
 
 CREATE TABLE Favourites (
     faves_id VARCHAR(8) PRIMARY KEY,
@@ -56,6 +58,4 @@ CONSTRAINT FK_Messages_uid FOREIGN KEY (user_id) REFERENCES Users (user_id)
 -- CONSTRAINT FK_Messages_uname FOREIGN KEY (user_name) REFERENCES Users (user_name)
 ); -- possibly, this should be separate and instead have a sent? (/additionally)
 
-select * from users where user_name = 'kf1';
-
-SELECT * from users;
+select * from Users;
