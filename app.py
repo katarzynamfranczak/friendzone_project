@@ -4,8 +4,8 @@ from database import get_database
 import os
 from datetime import datetime
 import sys
-
-
+import mysql.connector
+from mysql.connector import errors
 
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -73,38 +73,54 @@ def signup():
         email = request.form['email']
         user_dob = request.form['user_dob']
 
-        user_dob = datetime.strptime(user_dob, "%Y-%m-%d")
-        today = datetime.today()
-        age = today.year - user_dob.year - ((today.month, today.day) < (user_dob.month, user_dob.day))
-
-        if age <= 18:
-            flash('You must be at least 18 years old to signup to Friendzone')
-            #catch try except error 'mysql.connector.errors.DatabaseError: 3819 (HY000): Check constraint 'age_restriction' is violated.'
-
-        # we want to encrypt the password before storing in db
         user_password = bcrypt.generate_password_hash(
             request.form['user_password']
         ).decode('utf-8')
 
-        # connect to database
-        db = get_database()
-        cursor = db.cursor(buffered=True, dictionary=True)
-        # duplicate
-        cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
-        existing_user = cursor.fetchone()
-        print(f"existing user: {existing_user}")
-        if existing_user:
-            signup_error = 'Username already exists, please set-up different user name'
+        # user_password = request.form['user_password']
 
-            return render_template('signup.html', signup_error=signup_error)
+        # # password validation and password criteria -> this one prints the errors one by one, also it brings issues
+        # try:
+        #     if not any(char.isupper() for char in user_password):
+        #         raise ValueError("Password must contain at least one uppercase letter.")
+        #     if not any(char.islower() for char in user_password):
+        #         raise ValueError("Password must contain at least one lowercase letter.")
+        #     if not any(char.isdigit() for char in user_password):
+        #         raise ValueError("Password must contain at least one number.")
+        #     if len(user_password) < 9:
+        #         raise ValueError("Password must be at least 9 characters long.")
 
-        cursor.execute(
-            f"insert into users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', '{email}', 'user', '{user_dob}');")
+        # for security we want to encrypt the password before storing in db
 
-        db.commit()
-        cursor.close()
-        return redirect(url_for('login'))
-    return render_template("signup.html", user=user)
+
+
+        # connecting to database
+        try:
+            db = get_database()
+            cursor = db.cursor(buffered=True, dictionary=True)
+            # duplicate
+            cursor.execute(f"SELECT * FROM users WHERE user_name = '{user_name}';")
+            existing_user = cursor.fetchone()
+            print(f"existing user: {existing_user}")
+            if existing_user:
+                signup_error = 'Username already exists, please set-up different user name'
+
+                return render_template('signup.html', signup_error=signup_error)
+
+            cursor.execute(
+                f"INSERT INTO users (user_name, user_password, email, user_type, user_dob) values ('{user_name}', '{user_password}', '{email}', 'user', '{user_dob}');")
+            db.commit()
+            cursor.close()
+            return redirect(url_for('login'))
+
+        except mysql.connector.errors.DatabaseError as e:
+            if e.errno == 3819:
+                flash("Stop it, you're a minor! Friendzone is for adults.")
+            return render_template("signup.html", user=user)
+
+
+    return render_template('signup.html', user=user)
+
 @app.route('/promote', methods=['POST', 'GET'])
 def promote():
     user = get_current_user()
@@ -116,6 +132,7 @@ def promote():
     cursor.close()
 
     return render_template('promote.html', user=user, all_users=all_users)
+
 
 @app.route('/promote_to_admin/<int:user_id>')
 def promote_to_admin(user_id):
@@ -131,16 +148,18 @@ def promote_to_admin(user_id):
     return redirect(url_for('promote'))
 
 
-
-
-
-@app.route('/delete_user/<int:user_id>')
-def delete_user(user_id):
+@app.route('/delete_user/<int:user_id><user_name>')
+def delete_user(user_id, user_name):
     db = get_database()
-    db.execute('DELETE FROM Users WHERE user_id = _', [user_id])
-    db.commit()
-    return redirect(url_for('promote'))
 
+    cursor = db.cursor(buffered=True, dictionary=True)
+    cursor.execute("DELETE FROM users WHERE user_id = %s AND user_name = %s", (user_id, user_name))
+    db.commit()
+    cursor.close()
+
+    flash(f"User {user_name} and with ID {user_id} has been deleted.")
+
+    return redirect(url_for('promote'))
 
 
 @app.route("/change_password", methods=["POST", "GET"])
@@ -162,11 +181,22 @@ def change_password():
         db.commit()
         cursor.close()
 
+        #
+        # try:
+        #     password = input("Enter your password, satisfying the following criteria:\n"
+        #                      "* at least one uppercase letter,\n"
+        #                      "* one lowercase letter,\n"
+        #                      "* one number,\n"
+        #                      "* at least one lowercase letter,\n"
+        #                      "* at least one number,\n"
+        #                     #"* nine characters long: ")
+        #     # The below code check if the password given satisfies the criteria:
+        #     if not any(char.isupper() for char in password):
+
         return redirect(url_for('login'))
 
-
     return render_template("change_password.html")
-    # how to direct the user to log in page?
+
 
 
 @app.route("/logout")
