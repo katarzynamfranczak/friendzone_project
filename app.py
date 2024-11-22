@@ -77,24 +77,7 @@ def signup():
             request.form['user_password']
         ).decode('utf-8')
 
-        # user_password = request.form['user_password']
-
-        # # password validation and password criteria -> this one prints the errors one by one, also it brings issues
-        # try:
-        #     if not any(char.isupper() for char in user_password):
-        #         raise ValueError("Password must contain at least one uppercase letter.")
-        #     if not any(char.islower() for char in user_password):
-        #         raise ValueError("Password must contain at least one lowercase letter.")
-        #     if not any(char.isdigit() for char in user_password):
-        #         raise ValueError("Password must contain at least one number.")
-        #     if len(user_password) < 9:
-        #         raise ValueError("Password must be at least 9 characters long.")
-
-        # for security we want to encrypt the password before storing in db
-
-
-
-        # connecting to database
+        # user age validation
         try:
             db = get_database()
             cursor = db.cursor(buffered=True, dictionary=True)
@@ -172,7 +155,7 @@ def change_password():
             request.form['user_password']
         ).decode('utf-8')
 
-        # connect to database | needs more work, it does not change the password
+        # connect to the db and change the password
         db = get_database()
         cursor = db.cursor(buffered=True, dictionary=True)
 
@@ -180,19 +163,6 @@ def change_password():
             f"UPDATE users SET user_password = '{new_user_password}' WHERE email = '{email}';")
         db.commit()
         cursor.close()
-
-        #
-        # try:
-        #     password = input("Enter your password, satisfying the following criteria:\n"
-        #                      "* at least one uppercase letter,\n"
-        #                      "* one lowercase letter,\n"
-        #                      "* one number,\n"
-        #                      "* at least one lowercase letter,\n"
-        #                      "* at least one number,\n"
-        #                     #"* nine characters long: ")
-        #     # The below code check if the password given satisfies the criteria:
-        #     if not any(char.isupper() for char in password):
-
         return redirect(url_for('login'))
 
     return render_template("change_password.html")
