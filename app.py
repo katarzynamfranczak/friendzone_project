@@ -1,11 +1,11 @@
+from zipfile import error
+
 from flask import Flask, render_template, url_for, request, redirect, session, flash
 from flask_bcrypt import Bcrypt
 from database import get_database
 import os
-from datetime import datetime
 import sys
 import mysql.connector
-from mysql.connector import errors
 
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -88,6 +88,7 @@ def signup():
             if existing_user:
                 signup_error = 'Username already exists, please set-up different user name'
 
+
                 return render_template('signup.html', signup_error=signup_error)
 
             cursor.execute(
@@ -98,7 +99,7 @@ def signup():
 
         except mysql.connector.errors.DatabaseError as e:
             if e.errno == 3819:
-                flash("Stop it, you're a minor! Friendzone is for adults.")
+                flash("Stop it, you're a minor! Friendzone is for adults.", category = 'error')
             return render_template("signup.html", user=user)
 
 
@@ -140,7 +141,7 @@ def delete_user(user_id, user_name):
     db.commit()
     cursor.close()
 
-    flash(f"User {user_name} and with ID {user_id} has been deleted.")
+    flash(f"User {user_name} with ID {user_id} has been deleted.", category = 'error')
 
     return redirect(url_for('promote'))
 
